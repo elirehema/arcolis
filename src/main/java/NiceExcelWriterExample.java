@@ -141,25 +141,34 @@ public class NiceExcelWriterExample {
         sheet.setFitToPage(true);
 
         Cell cellNumber = row.createCell(0);
-        cellNumber.setCellStyle(cellStyle);
+        eCellStyle.withCell(cellNumber)
+                .setCellStyles()
+                .setDefaultHeaderBackground()
+                .setDefaultSheetFont();
         cellNumber.setCellValue("#");
         int index = 0;
         for (Field f : o.getClass().getDeclaredFields()) {
             Cell cell = row.createCell(++index);
-            cell.setCellStyle(cellStyle);
+            eCellStyle.withCell(cell)
+                    .setCellStyles()
+                    .setDefaultSheetFont()
+                    .setDefaultHeaderBackground();
+
+            //cell.setCellStyle(cellStyle);
             cell.setCellValue(f.getName().toUpperCase());
         }
     }
 
     private void writeBook(Object obj, Integer rowNumber, Row row) {
         Cell cell = row.createCell(0);
-        CellStyle cellStyle = eCellStyle.getCellStyle(cell);
-
-        CellStyle backgroundStyle = eCellStyle.getCellStyle(cell);
-        backgroundStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
-        backgroundStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        cell.setCellValue(rowNumber);
-        cell.setCellStyle(backgroundStyle);
+        cell.setCellValue(rowNumber.toString());
+        ECellStyle ecellStyle = new ECellStyle();
+        ecellStyle.withCell(cell)
+                .setDefaultCellStyle()
+                .setDefaultSheetFont()
+                .setCellStyles()
+                .setDefaultBackgroundStyle()
+                .setCellStyles();
         Field[] fields = obj.getClass().getDeclaredFields();
         int rowCount = 0;
         for (Field f : fields) {
@@ -173,12 +182,10 @@ public class NiceExcelWriterExample {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            cell.setCellStyle(cellStyle);
+            // cell.setCellStyle(cellStyle);
         }
 
     }
-
-
 
 
 }
