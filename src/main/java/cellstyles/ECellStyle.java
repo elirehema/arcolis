@@ -1,16 +1,12 @@
 package cellstyles;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 public class ECellStyle {
 
     public CellStyle getCellStyle(Cell cell){
-
         CellStyle cellStyle = cell.getCellStyle();
 
         Font font = cell.getSheet().getWorkbook().createFont();
@@ -30,5 +26,16 @@ public class ECellStyle {
 
         return cellStyle;
 
+    }
+
+    public Font getCellFont(Sheet sheet){
+        /**Set Fonts **/
+        Font font = sheet.getWorkbook().createFont();
+        font.setBoldweight((short) 12);
+        font.setFontName("Operator Mono Medium");
+        font.setFontHeightInPoints((short) 15);
+        font.setColor(IndexedColors.WHITE.getIndex());
+
+        return font;
     }
 }
