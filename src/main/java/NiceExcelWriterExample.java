@@ -49,7 +49,7 @@ public class NiceExcelWriterExample {
     /**
      * Write an Excel File with single Sheet
      **/
-    public void writeExcel(List<Book> objectList, String excelFilePath) throws IOException {
+    public void writeExcel(List<?> objectList, String excelFilePath) throws IOException {
         Workbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
         int rowCount = 0;
