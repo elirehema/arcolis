@@ -7,7 +7,13 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
+    branches: [ opened, labeled, master ]
+  issues:
+    types: [opened, labeled]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+  MY_GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
 
 jobs:
   build:
@@ -23,4 +29,36 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build
+      #run: ./gradlew build
+  assign_one_project:
+    runs-on: ubuntu-latest
+    name: Assign to To Project
+    steps:
+      - name: Assign NEW issues and NEW pull requests to CHILD project
+        uses: srggrs/assign-one-project-github-action@1.2.0
+        if: github.event.action == 'opened'
+        with:
+          project: 'https://github.com/elirehema/arcolios/projects/2'
+
+      - name: Assign issues and pull requests with `enhancement` label to CHILD project
+        uses: srggrs/assign-one-project-github-action@1.2.0
+        if: |
+          contains(github.event.issue.labels.*.name, 'enhancement') ||
+          contains(github.event.pull_request.labels.*.name, 'enhancement')
+        with:
+          project: 'https://github.com/elirehema/arcolios/projects/2'
+          column_name: 'To do'
+    - name: Assign NEW issues and NEW pull requests to HEADER project
+        uses: srggrs/assign-one-project-github-action@1.2.0
+        if: github.event.action == 'opened'
+        with:
+          project: 'https://github.com/users/elirehema/projects/3'
+
+    - name: Assign issues and pull requests with `enhancement` label to HEADER project
+      uses: srggrs/assign-one-project-github-action@1.2.0
+      if: |
+        contains(github.event.issue.labels.*.name, 'enhancement') ||
+        contains(github.event.pull_request.labels.*.name, 'enhancement')
+      with:
+        project: 'https://github.com/users/elirehema/projects/3'
+        column_name: 'To do'
