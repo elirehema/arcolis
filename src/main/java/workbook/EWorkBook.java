@@ -6,13 +6,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 
-public class EWorkook {
+public class EWorkBook {
     public Workbook getWorkbook(String excelFilePath) throws IOException {
         Workbook workbook = null;
-
         if (excelFilePath.endsWith("xlsx")) {
             workbook = new XSSFWorkbook();
-            //Sheet sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
         } else if (excelFilePath.endsWith("xls")) {
             workbook = new HSSFWorkbook();
         } else {

@@ -1,21 +1,11 @@
 import cellstyles.ECellStyle;
-import models.Book;
-import models.Language;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
-import workbook.EWorkook;
+import workbook.EWorkBook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
@@ -44,13 +34,13 @@ import java.util.logging.Logger;
 public class NiceExcelWriterExample {
     private static final Logger LOGGER = Logger.getLogger(NiceExcelWriterExample.class.getName());
     private ECellStyle eCellStyle = null;
-    private EWorkook eWorkook = new EWorkook();
+    private EWorkBook eWorkBook = new EWorkBook();
 
     /**
      * Write an Excel File with single Sheet
      **/
     public void writeExcel(List<?> objectList, String excelFilePath) throws IOException {
-        Workbook workbook = new HSSFWorkbook();
+        Workbook workbook = eWorkBook.getWorkbook(excelFilePath);
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
         int rowCount = 0;
         for (Object object : objectList) {
@@ -68,7 +58,7 @@ public class NiceExcelWriterExample {
     }
 
     public void writeMultipleSheetExcel(List<?> languages, String excelFilePath) throws IOException {
-        Workbook workbook = eWorkook.getWorkbook(excelFilePath);
+        Workbook workbook = eWorkBook.getWorkbook(excelFilePath);
         for (Object parentObject : languages) {
             System.out.println(parentObject.getClass().getDeclaredFields());
             // Sheet sheet = workbook.createSheet("arentObject");
@@ -117,27 +107,11 @@ public class NiceExcelWriterExample {
         Footer ft = sheet.getFooter();
         ft.setRight("Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages());
 
-        /**Set Fonts **/
-        Font font = sheet.getWorkbook().createFont();
-        font.setBoldweight((short) 12);
-        font.setFontName("Operator Mono Medium");
-        font.setFontHeightInPoints((short) 15);
-        font.setColor(IndexedColors.WHITE.getIndex());
-        cellStyle.setFont(font);
-
         /**Set Print Format**/
         sheet.setAutobreaks(true);
         printSetup.setFitHeight((short) 1);
         printSetup.setFitWidth((short) 1);
 
-        /** Set Bottom Styles **/
-        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setBorderBottom(XSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
-        cellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
-        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
         Row row = sheet.createRow(0);
         sheet.setDefaultColumnWidth(15);
