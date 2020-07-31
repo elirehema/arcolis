@@ -47,7 +47,7 @@ public class NiceExcelWriterExample {
             createHeaderRow(object, sheet);
             Row row = sheet.createRow(++rowCount);
             try {
-                writeBook(object, rowCount, row);
+                writeExcelSheetBook(object, rowCount, row);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -132,7 +132,7 @@ public class NiceExcelWriterExample {
 
     }
 
-    private void writeBook(Object obj, Integer rowNumber, Row row) {
+    private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row) {
         Cell cell = row.createCell(0);
         eCellStyle = new ECellStyle(cell);
         cell.setCellValue(rowNumber.toString());
