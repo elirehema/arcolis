@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  **/
 public class NiceExcelWriterExample {
     private static final Logger LOGGER = Logger.getLogger(NiceExcelWriterExample.class.getName());
-    private ECellStyle eCellStyle = new ECellStyle();
+    private ECellStyle eCellStyle = null;
     private EWorkook eWorkook = new EWorkook();
 
     /**
@@ -67,30 +67,32 @@ public class NiceExcelWriterExample {
         }
     }
 
-    public void writeMultipleSheetExcel(List<Language> languages, String excelFilePath) throws IOException {
+    public void writeMultipleSheetExcel(List<?> languages, String excelFilePath) throws IOException {
         Workbook workbook = eWorkook.getWorkbook(excelFilePath);
-        for (Language parentObject : languages) {
-            Sheet sheet = workbook.createSheet(parentObject.getName());
+        for (Object parentObject : languages) {
+            System.out.println(parentObject.getClass().getDeclaredFields());
+            // Sheet sheet = workbook.createSheet("arentObject");
             int rowCount = 0;
             Field[] fields = parentObject.getClass().getDeclaredFields();
             for (Field f : fields) {
 
                 try {
                     Field field = parentObject.getClass().getDeclaredField(f.getName().toString());
+
                     field.setAccessible(true);
                     Object object = field.get(parentObject);
 
                     if (object instanceof Collection) {
-                        System.out.println("Collection Instance");
+                        // System.out.println("Collection Instance" + object.toString());
                     }
                     if (object instanceof String) {
-                        System.out.println("String Instance:  " + object.toString());
+                        //  System.out.println("String Instance:  " + object.toString());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            for (Object obj : parentObject.getBooks()) {
+           /* for (Object obj : parentObject.getBooks()) {
                 createHeaderRow(obj, sheet);
                 Row row = sheet.createRow(++rowCount);
                 try {
@@ -98,7 +100,7 @@ public class NiceExcelWriterExample {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
             rowCount = 0;
         }
         try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
@@ -108,6 +110,7 @@ public class NiceExcelWriterExample {
 
     private void createHeaderRow(Object o, Sheet sheet) {
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        Cell cell =  null;
         PrintSetup printSetup = sheet.getPrintSetup();
 
         /**Set Page Number on Footer **/
@@ -140,49 +143,40 @@ public class NiceExcelWriterExample {
         sheet.setDefaultColumnWidth(15);
         sheet.setFitToPage(true);
 
-        Cell cellNumber = row.createCell(0);
-        eCellStyle.withCell(cellNumber)
-                .setCellStyles()
-                .setDefaultHeaderBackground()
-                .setDefaultSheetFont();
-        cellNumber.setCellValue("#");
+        cell = row.createCell(0);
+        eCellStyle = new ECellStyle(sheet, cell);
+        eCellStyle.setDefaultHeaderBackground();
+        cell.setCellValue("#");
         int index = 0;
         for (Field f : o.getClass().getDeclaredFields()) {
-            Cell cell = row.createCell(++index);
-            eCellStyle.withCell(cell)
-                    .setCellStyles()
-                    .setDefaultSheetFont()
+            cell = row.createCell(++index);
+            eCellStyle = new ECellStyle(sheet, cell);
+            eCellStyle
                     .setDefaultHeaderBackground();
-
-            //cell.setCellStyle(cellStyle);
             cell.setCellValue(f.getName().toUpperCase());
         }
+
     }
 
     private void writeBook(Object obj, Integer rowNumber, Row row) {
         Cell cell = row.createCell(0);
+        eCellStyle = new ECellStyle(cell);
         cell.setCellValue(rowNumber.toString());
-        ECellStyle ecellStyle = new ECellStyle();
-        ecellStyle.withCell(cell)
-                .setDefaultCellStyle()
-                .setDefaultSheetFont()
-                .setCellStyles()
-                .setDefaultBackgroundStyle()
-                .setCellStyles();
         Field[] fields = obj.getClass().getDeclaredFields();
         int rowCount = 0;
         for (Field f : fields) {
             f.setAccessible(true);
             cell = row.createCell(++rowCount);
+            eCellStyle = new ECellStyle(cell);
             try {
                 Field field = obj.getClass().getDeclaredField(f.getName().toString());
                 field.setAccessible(true);
                 Object value = field.get(obj);
+                cell.setCellStyle(eCellStyle.getCellStyle());
                 cell.setCellValue(value.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // cell.setCellStyle(cellStyle);
         }
 
     }

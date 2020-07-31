@@ -14,6 +14,19 @@ public class ECellStyle {
     public ECellStyle() {
     }
 
+    public ECellStyle(Sheet sheet) {
+        this.sheet = sheet;
+    }
+
+    public ECellStyle(Cell cell) {
+        this.cell = cell;
+    }
+
+    public ECellStyle(Sheet sheet, Cell cell) {
+        this.cell = cell;
+        this.sheet = sheet;
+    }
+
     public ECellStyle withCell(Cell cell) {
         this.cell = cell;
         return this;
@@ -25,21 +38,41 @@ public class ECellStyle {
         return this;
     }
 
-    /** Set Bottom Styles **/
-    public CellStyle getCellStyle(Cell cell) {
-        this.cell = cell;
-        CellStyle cellStyle = cell.getCellStyle();
-        cellStyle.setFont(getSheetTextFont());
+    /**
+     * Set Bottom Styles
+     **/
+    public CellStyle getCellStyle() {
+
+        CellStyle cellStyle = this.cell.getCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setBorderBottom(XSSFCellStyle.BORDER_DOTTED);
         cellStyle.setBorderBottom(HSSFCellStyle.BORDER_DOTTED);
         cellStyle.setBorderLeft(XSSFCellStyle.BORDER_DOTTED);
         cellStyle.setBorderLeft(HSSFCellStyle.BORDER_DOTTED);
+
+        cellStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
         cellStyle.setLeftBorderColor(IndexedColors.WHITE.getIndex());
         cellStyle.setBottomBorderColor(IndexedColors.WHITE.getIndex());
+        this.cell.setCellStyle(cellStyle);
         return cellStyle;
 
+    }
+
+    public CellStyle getCellStyles(Cell cell) {
+        this.cell = cell;
+        CellStyle cellStyle = cell.getCellStyle();
+        cellStyle.setFont(setTextFonts(cellStyle));
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+        cellStyle.setBorderBottom(XSSFCellStyle.BORDER_DOTTED);
+        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_DOTTED);
+        cellStyle.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
+        cellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+        return cellStyle;
     }
 
     public ECellStyle setDefaultCellStyle() {
@@ -52,44 +85,25 @@ public class ECellStyle {
         cellStyle.setBorderLeft(HSSFCellStyle.BORDER_DOTTED);
         cellStyle.setLeftBorderColor(IndexedColors.WHITE.getIndex());
         cellStyle.setBottomBorderColor(IndexedColors.WHITE.getIndex());
+        cell.setCellStyle(cellStyle);
         return this;
     }
 
-    public ECellStyle setCellStyles() {
-        this.cell = cell;
-        cell.setCellStyle(getCellStyle(cell));
-        return this;
-    }
 
     /**
      * Set Excel sheet default BackgroundStyle.
      **/
     public ECellStyle setDefaultBackgroundStyle() {
-        CellStyle backgroundStyle = getCellStyle(cell);
+        CellStyle backgroundStyle = getSheetCellStyle();
         backgroundStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
         backgroundStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        cell.setCellStyle(backgroundStyle);
+        this.cell.setCellStyle(backgroundStyle);
         return this;
     }
 
-    /**
-     * Set Custom Sheet fonts
-     **/
-    public ECellStyle setCustomSheetFont(Sheet sheet) {
-        setHeaderFonts();
-        return this;
-    }
-
-    /**
-     * Set default sheet font
-     **/
-    public ECellStyle setDefaultSheetFont() {
-        setHeaderFonts();
-        return this;
-    }
 
     public ECellStyle setDefaultHeaderBackground() {
-        CellStyle cellStyle = cell.getCellStyle();
+        CellStyle cellStyle = getSheetCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setBorderBottom(XSSFCellStyle.BORDER_DOTTED);
@@ -97,40 +111,56 @@ public class ECellStyle {
         cellStyle.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
         cellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
         cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        this.cell.setCellStyle(cellStyle);
+        setHeaderFonts(cellStyle);
         return this;
     }
 
 
     /**
-     * Apply fonts
+     * Apply Header fonts
      **/
-    private ECellStyle setHeaderFonts() {
+    private Font setHeaderFonts(CellStyle cellStyle) {
         Font font = getSheetTextFont();
         font.setBoldweight((short) 12);
         font.setFontName("Operator Mono Medium");
         font.setFontHeightInPoints((short) 15);
         font.setColor(IndexedColors.WHITE.getIndex());
+        cellStyle.setFont(font);
+        return font;
+    }
 
-        return this;
+    /**
+     * Apply fonts
+     **/
+    private Font setTextFonts(CellStyle cellStyle) {
+        Font font = getSheetTextFont();
+        font.setFontName("Operator Mono Medium");
+        font.setColor(IndexedColors.LIGHT_GREEN.getIndex());
+        cellStyle.setFont(font);
+        return font;
     }
 
     /**
      * Set sheet text font styles
      **/
     private Font getSheetTextFont() {
-        Font font = null;
-        if (sheet != null && cell == null) {
-            font = sheet.getWorkbook().createFont();
-
-        } else if (cell != null && sheet == null) {
-            font = cell.getSheet().getWorkbook().createFont();
-        } else {
-            System.out.print("Sheet not found");
+        Font font = this.sheet.getWorkbook().createFont();
+        if (font.equals(null)) {
+            font = this.cell.getSheet().getWorkbook().createFont();
         }
-        cell.getSheet().getWorkbook().createFont();
-        font.setFontName("Operator Mono Book");
-        font.setColor(IndexedColors.GREEN.index);
         return font;
+    }
+
+    /**
+     * Get CellStyle from Sheet or Cell
+     **/
+    private CellStyle getSheetCellStyle() {
+        CellStyle cellStyle = this.sheet.getWorkbook().createCellStyle();
+        if (cellStyle == null) {
+            cellStyle = this.cell.getCellStyle();
+        }
+        return cellStyle;
     }
 
 }
