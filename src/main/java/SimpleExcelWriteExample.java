@@ -44,7 +44,7 @@ public class SimpleExcelWriteExample {
         List<Language> languageList = getProgramingLanguage();
         String excelFilePath = "NiceJavaBooks.xlsx";
         String multipleFilePath = "BookList.xls";
-        excelWriterExample.writeExcel(getListBook(), multipleFilePath);
+        //excelWriterExample.writeExcel(getListBook(), multipleFilePath);
         excelWriterExample.writeMultipleSheetExcel(languageList, excelFilePath);
         System.exit(0);
     }
