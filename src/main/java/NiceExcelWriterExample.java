@@ -3,6 +3,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import workbook.EWorkBook;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -32,13 +33,14 @@ import java.util.logging.Logger;
  * --
  **/
 public class NiceExcelWriterExample {
-    private static final Logger LOGGER = Logger.getLogger(NiceExcelWriterExample.class.getName());
+    private Logger logger = Logger.getLogger(NiceExcelWriterExample.class.getName());
     private ECellStyle eCellStyle = null;
     private EWorkBook eWorkBook = new EWorkBook();
 
     /**
      * Write an Excel File with single Sheet
      **/
+
     public void writeExcel(List<?> objectList, String excelFilePath) throws IOException {
         Workbook workbook = eWorkBook.getWorkbook(excelFilePath);
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
@@ -60,24 +62,20 @@ public class NiceExcelWriterExample {
     public void writeMultipleSheetExcel(List<?> languages, String excelFilePath) throws IOException {
         Workbook workbook = eWorkBook.getWorkbook(excelFilePath);
         for (Object parentObject : languages) {
-            System.out.println(parentObject.getClass().getDeclaredFields());
-            // Sheet sheet = workbook.createSheet("arentObject");
             int rowCount = 0;
             Field[] fields = parentObject.getClass().getDeclaredFields();
             for (Field f : fields) {
-
                 try {
-                    Field field = parentObject.getClass().getDeclaredField(f.getName().toString());
-
+                    Field field = parentObject.getClass().getDeclaredField(f.getName());
                     field.setAccessible(true);
                     Object object = field.get(parentObject);
-
                     if (object instanceof Collection) {
-                        // System.out.println("Collection Instance" + object.toString());
+                        // logger.info("Collection Instance" + object.toString());
                     }
                     if (object instanceof String) {
-                        //  System.out.println("String Instance:  " + object.toString());
+                        Sheet sheet = workbook.createSheet(object.toString());
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -100,7 +98,7 @@ public class NiceExcelWriterExample {
 
     private void createHeaderRow(Object o, Sheet sheet) {
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-        Cell cell =  null;
+        Cell cell = null;
         PrintSetup printSetup = sheet.getPrintSetup();
 
         /**Set Page Number on Footer **/
