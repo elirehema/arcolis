@@ -1,15 +1,15 @@
+
 import cellstyles.ECellStyle;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
+import org.apache.poi.ss.usermodel.*;
 import workbook.EWorkBook;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * -- This file created by eli on 15/07/2020 for poixss
@@ -36,6 +36,7 @@ public class NiceExcelWriterExample {
     private Logger logger = Logger.getLogger(NiceExcelWriterExample.class.getName());
     private ECellStyle eCellStyle = null;
     private EWorkBook eWorkBook = new EWorkBook();
+    private Workbook workbook;
 
     /**
      * Write an Excel File with single Sheet
@@ -59,37 +60,29 @@ public class NiceExcelWriterExample {
         }
     }
 
-    public void writeMultipleSheetExcel(List<?> languages, String excelFilePath) throws IOException {
-        Workbook workbook = eWorkBook.getWorkbook(excelFilePath);
-        for (Object parentObject : languages) {
-            int rowCount = 0;
-            Field[] fields = parentObject.getClass().getDeclaredFields();
-            for (Field f : fields) {
-                try {
-                    Field field = parentObject.getClass().getDeclaredField(f.getName());
-                    field.setAccessible(true);
-                    Object object = field.get(parentObject);
-                    if (object instanceof Collection) {
-                        // logger.info("Collection Instance" + object.toString());
-                    }
-                    if (object instanceof String) {
-                        Sheet sheet = workbook.createSheet(object.toString());
-                    }
+    public void writeMultipleSheetExcel(List<Map<String, List<?>>> languages, String excelFilePath) throws IOException {
+        workbook = eWorkBook.getWorkbook(excelFilePath);
+        for (Map<String, List<?>> objectMap : languages) {
+            //Iterator iterator = objectMap.entrySet().iterator();
+            Iterator iterator = objectMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).iterator();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+            while (iterator.hasNext()){
+                Map.Entry entry =  (Map.Entry)iterator.next();
+                Sheet sheet = workbook.createSheet(entry.getKey().toString());
+                List<Object> objects = (List<Object>) entry.getValue();
+                int rowCount = 0;
+                for (Object o: objects){
+                    createHeaderRow(o, sheet);
+                    Row row = sheet.createRow(++rowCount);
+                    try {
+                        writeExcelSheetBook(o, rowCount, row);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+                rowCount = 0;
             }
-           /* for (Object obj : parentObject.getBooks()) {
-                createHeaderRow(obj, sheet);
-                Row row = sheet.createRow(++rowCount);
-                try {
-                    writeBook(obj, rowCount, row);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }*/
-            rowCount = 0;
+
         }
         try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
             workbook.write(outputStream);
@@ -120,12 +113,12 @@ public class NiceExcelWriterExample {
         eCellStyle.setDefaultHeaderBackground();
         cell.setCellValue("#");
         int index = 0;
-        for (Field f : o.getClass().getDeclaredFields()) {
+        Field[] fields = o.getClass().getDeclaredFields();
+        for (int i = 0; i < getFieldNames(fields).size(); i++) {
             cell = row.createCell(++index);
             eCellStyle = new ECellStyle(sheet, cell);
-            eCellStyle
-                    .setDefaultHeaderBackground();
-            cell.setCellValue(f.getName().toUpperCase());
+            eCellStyle.setDefaultHeaderBackground();
+            cell.setCellValue(fields[i].getName().toUpperCase());
         }
 
     }
@@ -133,6 +126,7 @@ public class NiceExcelWriterExample {
     private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row) {
         Cell cell = row.createCell(0);
         eCellStyle = new ECellStyle(cell);
+        cell.setCellStyle(eCellStyle.getCellStyle());
         cell.setCellValue(rowNumber.toString());
         Field[] fields = obj.getClass().getDeclaredFields();
         int rowCount = 0;
@@ -152,6 +146,36 @@ public class NiceExcelWriterExample {
         }
 
     }
+
+    private static List<String> getFieldNames(Field[] fields) {
+        List<String> fieldNames = new ArrayList<>();
+        for (Field field : fields) {
+            fieldNames.add(field.getName());
+        }
+
+        return fieldNames;
+    }
+
+    /**
+     * Get String from Object
+     **/
+    private static String  getStringFromObject(Object object) throws IllegalArgumentException {
+        if (object instanceof String) {
+            return object.toString();
+        }
+        return null;
+    }
+
+    /**
+     * Get Collection from Object
+     **/
+    private static Object getCollectionFrom(Object object)  throws IllegalArgumentException {
+        if (object instanceof Collection) {
+            return object;
+        }
+        return null;
+    }
+
 
 
 }
