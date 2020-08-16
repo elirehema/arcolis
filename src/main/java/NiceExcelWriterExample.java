@@ -43,7 +43,7 @@ public class NiceExcelWriterExample {
      **/
 
     public void writeExcel(List<?> objectList, String excelFilePath) throws IOException {
-        Workbook workbook = eWorkBook.getWorkbook(excelFilePath);
+        workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
         int rowCount = 0;
         for (Object object : objectList) {
@@ -57,21 +57,22 @@ public class NiceExcelWriterExample {
         }
         try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
             workbook.write(outputStream);
+            outputStream.close();
         }
+
     }
 
-    public void writeMultipleSheetExcel(List<Map<String, List<?>>> languages, String excelFilePath) throws IOException {
+    @SuppressWarnings("unchecked")
+    public void writeToMultipleExcelSheets(List<Map<String, List<?>>> languages, String excelFilePath) throws IOException {
         workbook = eWorkBook.getWorkbook(excelFilePath);
         for (Map<String, List<?>> objectMap : languages) {
-            //Iterator iterator = objectMap.entrySet().iterator();
             Iterator iterator = objectMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).iterator();
-
-            while (iterator.hasNext()){
-                Map.Entry entry =  (Map.Entry)iterator.next();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
                 Sheet sheet = workbook.createSheet(entry.getKey().toString());
                 List<Object> objects = (List<Object>) entry.getValue();
                 int rowCount = 0;
-                for (Object o: objects){
+                for (Object o : objects) {
                     createHeaderRow(o, sheet);
                     Row row = sheet.createRow(++rowCount);
                     try {
@@ -86,7 +87,9 @@ public class NiceExcelWriterExample {
         }
         try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
             workbook.write(outputStream);
+            outputStream.close();
         }
+
     }
 
     private void createHeaderRow(Object o, Sheet sheet) {
@@ -122,6 +125,12 @@ public class NiceExcelWriterExample {
         }
 
     }
+
+    /**
+     * Write data to created excel sheet
+     * Create initial column named #
+     * Give {@param rowNumber} to initial column
+     **/
 
     private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row) {
         Cell cell = row.createCell(0);
@@ -159,7 +168,7 @@ public class NiceExcelWriterExample {
     /**
      * Get String from Object
      **/
-    private static String  getStringFromObject(Object object) throws IllegalArgumentException {
+    private static String getStringFromObject(Object object) throws IllegalArgumentException {
         if (object instanceof String) {
             return object.toString();
         }
@@ -169,13 +178,12 @@ public class NiceExcelWriterExample {
     /**
      * Get Collection from Object
      **/
-    private static Object getCollectionFrom(Object object)  throws IllegalArgumentException {
+    private static Object getCollectionFrom(Object object) throws IllegalArgumentException {
         if (object instanceof Collection) {
             return object;
         }
         return null;
     }
-
 
 
 }

@@ -40,10 +40,10 @@ public class SimpleExcelWriteExample {
         NiceExcelWriterExample excelWriterExample = new NiceExcelWriterExample();
 
         List<Map<String, List<?>> > languageList = getListOfObject();
-        String excelFilePath = "NiceJavaBooks.xlsx";
+        String excelFilePath = "NiceJavaBooks";
         String multipleFilePath = "BookList.xls";
-        //excelWriterExample.writeExcel(getListBook(), multipleFilePath);
-        excelWriterExample.writeMultipleSheetExcel(languageList, excelFilePath);
+        //excelWriterExample.writeExcel(getListBook("Book Name 1"), multipleFilePath);
+        excelWriterExample.writeToMultipleExcelSheets(languageList, excelFilePath);
         System.exit(0);
     }
 
