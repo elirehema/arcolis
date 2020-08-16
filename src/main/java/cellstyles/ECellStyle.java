@@ -44,15 +44,15 @@ public class ECellStyle {
     public CellStyle getCellStyle() {
 
         CellStyle cellStyle = this.cell.getCellStyle();
-        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setBorderBottom(XSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderLeft(XSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_DOTTED);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        cellStyle.setBorderLeft(BorderStyle.DASH_DOT_DOT);
+        cellStyle.setBorderLeft(BorderStyle.DASH_DOT_DOT);
 
         cellStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
-        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cellStyle.setLeftBorderColor(IndexedColors.WHITE.getIndex());
         cellStyle.setBottomBorderColor(IndexedColors.WHITE.getIndex());
         this.cell.setCellStyle(cellStyle);
@@ -64,25 +64,25 @@ public class ECellStyle {
         this.cell = cell;
         CellStyle cellStyle = cell.getCellStyle();
         cellStyle.setFont(setTextFonts(cellStyle));
-        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setBorderBottom(XSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_DOTTED);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
         cellStyle.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
         cellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
-        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         return cellStyle;
     }
 
     public ECellStyle setDefaultCellStyle() {
         CellStyle cellStyle = cell.getCellStyle();
-        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setBorderBottom(XSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderLeft(XSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_DOTTED);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        cellStyle.setBorderLeft(BorderStyle.DASH_DOT_DOT);
+        cellStyle.setBorderLeft(BorderStyle.DASH_DOT_DOT);
         cellStyle.setLeftBorderColor(IndexedColors.WHITE.getIndex());
         cellStyle.setBottomBorderColor(IndexedColors.WHITE.getIndex());
         cell.setCellStyle(cellStyle);
@@ -96,7 +96,7 @@ public class ECellStyle {
     public ECellStyle setDefaultBackgroundStyle() {
         CellStyle backgroundStyle = getSheetCellStyle();
         backgroundStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
-        backgroundStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        backgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         this.cell.setCellStyle(backgroundStyle);
         return this;
     }
@@ -104,13 +104,13 @@ public class ECellStyle {
 
     public ECellStyle setDefaultHeaderBackground() {
         CellStyle cellStyle = getSheetCellStyle();
-        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setBorderBottom(XSSFCellStyle.BORDER_DOTTED);
-        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_DOTTED);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
         cellStyle.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
         cellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
-        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         this.cell.setCellStyle(cellStyle);
         setHeaderFonts(cellStyle);
         return this;
@@ -122,7 +122,7 @@ public class ECellStyle {
      **/
     private Font setHeaderFonts(CellStyle cellStyle) {
         Font font = getSheetTextFont();
-        font.setBoldweight((short) 12);
+        font.setBold(true);
         font.setFontName("Operator Mono Medium");
         font.setFontHeightInPoints((short) 15);
         font.setColor(IndexedColors.WHITE.getIndex());
