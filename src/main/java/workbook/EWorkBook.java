@@ -20,4 +20,24 @@ public class EWorkBook {
         return workbook;
     }
 
+    /**
+     * Safe
+     * Accept any kind of @params excelFilePath name {@params excelFilePath }
+     * if files extension is not provided
+     * Ths excel file will be give .xls by default
+     * **/
+    public Workbook getDefaultExcelWorkbook(String excelFilePath) throws IOException {
+        Workbook workbook = null;
+        if (excelFilePath.endsWith("xlsx")) {
+            workbook = new XSSFWorkbook();
+        } else if (excelFilePath.endsWith("xls")) {
+            workbook = new HSSFWorkbook();
+        } else {
+            excelFilePath = excelFilePath.concat(".xls");
+            workbook = new HSSFWorkbook();
+        }
+
+        return workbook;
+    }
+
 }
