@@ -28,13 +28,12 @@ public class EWorkBook {
      * **/
     public Workbook getDefaultExcelWorkbook(String excelFilePath) throws IOException {
         Workbook workbook = null;
-        if (excelFilePath.endsWith("xlsx")) {
+        if (excelFilePath.endsWith(".xlsx")) {
             workbook = new XSSFWorkbook();
-        } else if (excelFilePath.endsWith("xls")) {
+        } else if (excelFilePath.endsWith(".xls")) {
             workbook = new HSSFWorkbook();
         } else {
-            excelFilePath = excelFilePath.concat(".xls");
-            workbook = new HSSFWorkbook();
+            workbook = new XSSFWorkbook();
         }
 
         return workbook;
