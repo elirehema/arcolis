@@ -2,6 +2,7 @@
 import cellstyles.ECellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import workbook.EWorkBook;
 
 import java.io.FileOutputStream;
@@ -37,6 +38,8 @@ public class NiceExcelWriterExample {
     private ECellStyle eCellStyle = null;
     private EWorkBook eWorkBook = new EWorkBook();
     private Workbook workbook;
+    Map<String, CellStyle> styles = null;
+
 
     /**
      * Write an Excel File with single Sheet
@@ -44,6 +47,7 @@ public class NiceExcelWriterExample {
 
     public void writeExcel(List<?> objectList, String excelFilePath) throws IOException {
         workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
+        styles = eCellStyle.createStyles(workbook);
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
         int rowCount = 0;
         for (Object object : objectList) {
@@ -55,7 +59,7 @@ public class NiceExcelWriterExample {
                 e.printStackTrace();
             }
         }
-        try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
+        try (FileOutputStream outputStream = new FileOutputStream(appendFileExtensionFormatIfNotProvided(excelFilePath))) {
             workbook.write(outputStream);
             outputStream.close();
         }
@@ -64,7 +68,8 @@ public class NiceExcelWriterExample {
 
     @SuppressWarnings("unchecked")
     public void writeToMultipleExcelSheets(List<Map<String, List<?>>> languages, String excelFilePath) throws IOException {
-        workbook = eWorkBook.getWorkbook(excelFilePath);
+        workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
+        styles = eCellStyle.createStyles(workbook);
         for (Map<String, List<?>> objectMap : languages) {
             Iterator iterator = objectMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).iterator();
             while (iterator.hasNext()) {
@@ -85,7 +90,7 @@ public class NiceExcelWriterExample {
             }
 
         }
-        try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
+        try (FileOutputStream outputStream = new FileOutputStream(appendFileExtensionFormatIfNotProvided(excelFilePath))) {
             workbook.write(outputStream);
             outputStream.close();
         }
@@ -93,36 +98,49 @@ public class NiceExcelWriterExample {
     }
 
     private void createHeaderRow(Object o, Sheet sheet) {
-        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-        Cell cell = null;
+       // CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        Cell dataCell, indexcells = null;
         PrintSetup printSetup = sheet.getPrintSetup();
+        printSetup.setFitHeight((short) 1);
+        printSetup.setFitWidth((short) 1);
+        printSetup.setLandscape(true);
+
 
         /**Set Page Number on Footer **/
         Footer ft = sheet.getFooter();
         ft.setRight("Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages());
 
-        /**Set Print Format**/
-        sheet.setAutobreaks(true);
-        printSetup.setFitHeight((short) 1);
-        printSetup.setFitWidth((short) 1);
-
-
-        Row row = sheet.createRow(0);
-        sheet.setDefaultColumnWidth(15);
+        sheet.setDefaultColumnWidth(16);
         sheet.setFitToPage(true);
+        sheet.setAutobreaks(true);
+        sheet.setHorizontallyCenter(true);
+        sheet.removeMergedRegion(0);
 
-        cell = row.createCell(0);
-        eCellStyle = new ECellStyle(sheet, cell);
-        eCellStyle.setDefaultHeaderBackground();
-        cell.setCellValue("#");
+       Row titleRow = sheet.createRow(0);
+       titleRow.setHeightInPoints(45);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue(o.getClass().getSimpleName().concat("\'s"));
+        titleCell.setCellStyle(styles.get("title"));
+        sheet.addMergedRegion(new CellRangeAddress(0,0,0, o.getClass().getDeclaredFields().length));
+
+
+
+        Row headerRow = sheet.createRow(1);
+        headerRow.setHeightInPoints(35);
+
+        indexcells = headerRow.createCell(0);
+        //eCellStyle = new ECellStyle(sheet, indexcells).setDefaultHeaderBackground();
+        indexcells.setCellValue("#");
         int index = 0;
         Field[] fields = o.getClass().getDeclaredFields();
         for (int i = 0; i < getFieldNames(fields).size(); i++) {
-            cell = row.createCell(++index);
-            eCellStyle = new ECellStyle(sheet, cell);
-            eCellStyle.setDefaultHeaderBackground();
-            cell.setCellValue(fields[i].getName().toUpperCase());
+            dataCell = headerRow.createCell(++index);
+            sheet.setColumnWidth(i,(fields[i].getName().length()+12) * 256);
+            //eCellStyle = new ECellStyle(sheet, dataCell);
+            //eCellStyle.setDefaultHeaderBackground();
+            dataCell.setCellValue(fields[i].getName().toUpperCase());
         }
+        index =0;
 
     }
 
@@ -183,6 +201,20 @@ public class NiceExcelWriterExample {
             return object;
         }
         return null;
+    }
+
+    /**Get default excel format**/
+    private  String appendFileExtensionFormatIfNotProvided(String extension){
+        String filename = null;
+        if (extension.endsWith(".xls")){
+            filename = extension;
+        }else if (extension.endsWith(".xlsx")){
+            filename = extension;
+        }else {
+            filename = extension.concat(".xls");
+        }
+
+        return filename;
     }
 
 
