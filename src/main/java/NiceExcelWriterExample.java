@@ -1,5 +1,5 @@
 
-import cellstyles.ECellStyle;
+import styles.ECellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * -- This file created by eli on 15/07/2020 for poixss
@@ -45,7 +44,7 @@ public class NiceExcelWriterExample {
      * Write an Excel File with single Sheet
      **/
 
-    public void writeExcel(List<?> objectList, String excelFilePath) throws IOException {
+    public void ExcelSheet(List<?> objectList, String excelFilePath) throws IOException {
         workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
         styles = eCellStyle.createStyles(workbook);
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
@@ -67,10 +66,11 @@ public class NiceExcelWriterExample {
     }
 
     @SuppressWarnings("unchecked")
-    public void writeToMultipleExcelSheets(List<Map<String, List<?>>> languages, String excelFilePath) throws IOException {
+    public void ExcelSheets(List<Map<String, List<?>>> objs, String excelFilePath) throws IOException {
         workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
         styles = eCellStyle.createStyles(workbook);
-        for (Map<String, List<?>> objectMap : languages) {
+
+        for (Map<String, List<?>> objectMap : objs) {
             Iterator iterator = objectMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).iterator();
             while (iterator.hasNext()) {
                 Map.Entry entry = (Map.Entry) iterator.next();
@@ -98,13 +98,11 @@ public class NiceExcelWriterExample {
     }
 
     private void createHeaderRow(Object o, Sheet sheet) {
-       // CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         Cell dataCell, indexcells = null;
         PrintSetup printSetup = sheet.getPrintSetup();
         printSetup.setFitHeight((short) 1);
         printSetup.setFitWidth((short) 1);
         printSetup.setLandscape(true);
-
 
         /**Set Page Number on Footer **/
         Footer ft = sheet.getFooter();
@@ -119,25 +117,21 @@ public class NiceExcelWriterExample {
        Row titleRow = sheet.createRow(0);
        titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue(o.getClass().getSimpleName().concat("\'s"));
+        titleCell.setCellValue(sheet.getSheetName());
         titleCell.setCellStyle(styles.get("title"));
         sheet.addMergedRegion(new CellRangeAddress(0,0,0, o.getClass().getDeclaredFields().length));
 
-
-
         Row headerRow = sheet.createRow(1);
         headerRow.setHeightInPoints(35);
-
         indexcells = headerRow.createCell(0);
-        //eCellStyle = new ECellStyle(sheet, indexcells).setDefaultHeaderBackground();
+        indexcells.setCellStyle(styles.get("header"));
         indexcells.setCellValue("#");
         int index = 0;
         Field[] fields = o.getClass().getDeclaredFields();
         for (int i = 0; i < getFieldNames(fields).size(); i++) {
             dataCell = headerRow.createCell(++index);
             sheet.setColumnWidth(i,(fields[i].getName().length()+12) * 256);
-            //eCellStyle = new ECellStyle(sheet, dataCell);
-            //eCellStyle.setDefaultHeaderBackground();
+            dataCell.setCellStyle(styles.get("header"));
             dataCell.setCellValue(fields[i].getName().toUpperCase());
         }
         index =0;
@@ -155,17 +149,17 @@ public class NiceExcelWriterExample {
         eCellStyle = new ECellStyle(cell);
         cell.setCellStyle(eCellStyle.getCellStyle());
         cell.setCellValue(rowNumber.toString());
+        cell.setCellStyle(styles.get("cell"));
         Field[] fields = obj.getClass().getDeclaredFields();
         int rowCount = 0;
         for (Field f : fields) {
             f.setAccessible(true);
             cell = row.createCell(++rowCount);
-            eCellStyle = new ECellStyle(cell);
             try {
                 Field field = obj.getClass().getDeclaredField(f.getName().toString());
                 field.setAccessible(true);
                 Object value = field.get(obj);
-                cell.setCellStyle(eCellStyle.getCellStyle());
+                cell.setCellStyle(styles.get("cell"));
                 cell.setCellValue(value.toString());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -183,25 +177,6 @@ public class NiceExcelWriterExample {
         return fieldNames;
     }
 
-    /**
-     * Get String from Object
-     **/
-    private static String getStringFromObject(Object object) throws IllegalArgumentException {
-        if (object instanceof String) {
-            return object.toString();
-        }
-        return null;
-    }
-
-    /**
-     * Get Collection from Object
-     **/
-    private static Object getCollectionFrom(Object object) throws IllegalArgumentException {
-        if (object instanceof Collection) {
-            return object;
-        }
-        return null;
-    }
 
     /**Get default excel format**/
     private  String appendFileExtensionFormatIfNotProvided(String extension){

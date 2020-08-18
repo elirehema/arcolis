@@ -43,7 +43,7 @@ public class SimpleExcelWriteExample {
         String excelFilePath = "NiceJavaBooks";
         String multipleFilePath = "BookList.xls";
         //excelWriterExample.writeExcel(getListBook("Book Name 1"), multipleFilePath);
-        excelWriterExample.writeToMultipleExcelSheets(languageList, excelFilePath);
+        excelWriterExample.ExcelSheets(languageList, excelFilePath);
         System.exit(0);
     }
 

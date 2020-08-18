@@ -1,8 +1,6 @@
-package cellstyles;
+package styles;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,35 +9,11 @@ public class ECellStyle {
     private Cell cell;
     private Sheet sheet;
 
-    /**
-     * Empty constructor
-     **/
-    public ECellStyle() {
-    }
-
-    public ECellStyle(Sheet sheet) {
-        this.sheet = sheet;
-    }
 
     public ECellStyle(Cell cell) {
         this.cell = cell;
     }
 
-    public ECellStyle(Sheet sheet, Cell cell) {
-        this.cell = cell;
-        this.sheet = sheet;
-    }
-
-    public ECellStyle withCell(Cell cell) {
-        this.cell = cell;
-        return this;
-    }
-
-    public ECellStyle withCellAndSheet(Cell cell, Sheet sheet) {
-        this.cell = cell;
-        this.sheet = sheet;
-        return this;
-    }
 
     /**
      * Set Bottom Styles
@@ -60,75 +34,8 @@ public class ECellStyle {
         return cellStyle;
     }
 
-    public CellStyle getCellStyles(Cell cell) {
-        this.cell = cell;
-        CellStyle cellStyle = cell.getCellStyle();
-        cellStyle.setFont(setTextFonts(cellStyle));
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
-        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
-        cellStyle.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
-        cellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
-        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-        return cellStyle;
-    }
-
-    public ECellStyle setDefaultCellStyle() {
-        CellStyle cellStyle = cell.getCellStyle();
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
-        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
-        cellStyle.setBorderLeft(BorderStyle.DASH_DOT_DOT);
-        cellStyle.setBorderLeft(BorderStyle.DASH_DOT_DOT);
-        cellStyle.setLeftBorderColor(IndexedColors.WHITE.getIndex());
-        cellStyle.setBottomBorderColor(IndexedColors.WHITE.getIndex());
-        cell.setCellStyle(cellStyle);
-        return this;
-    }
 
 
-    /**
-     * Set Excel sheet default BackgroundStyle.
-     **/
-    public ECellStyle setDefaultBackgroundStyle() {
-        CellStyle backgroundStyle = getSheetCellStyle();
-        backgroundStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
-        backgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        this.cell.setCellStyle(backgroundStyle);
-        return this;
-    }
-
-
-    public ECellStyle setDefaultHeaderBackground() {
-        CellStyle cellStyle = getSheetCellStyle();
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
-        cellStyle.setBorderBottom(BorderStyle.DASH_DOT_DOT);
-        cellStyle.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
-        cellStyle.setFillForegroundColor(IndexedColors.BLUE_GREY.getIndex());
-        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        this.cell.setCellStyle(cellStyle);
-        setHeaderFonts(cellStyle);
-        return this;
-    }
-
-
-    /**
-     * Apply Header fonts
-     **/
-    private Font setHeaderFonts(CellStyle cellStyle) {
-        Font font = getSheetTextFont();
-        font.setBold(true);
-        font.setFontName("Operator Mono Medium");
-        font.setFontHeightInPoints((short) 15);
-        font.setColor(IndexedColors.WHITE.getIndex());
-        cellStyle.setFont(font);
-        return font;
-    }
 
     /**
      * Apply fonts
@@ -152,24 +59,17 @@ public class ECellStyle {
         return font;
     }
 
-    /**
-     * Get CellStyle from Sheet or Cell
-     **/
-    private CellStyle getSheetCellStyle() {
-        CellStyle cellStyle = this.sheet.getWorkbook().createCellStyle();
-        if (cellStyle == null) {
-            cellStyle = this.cell.getCellStyle();
-        }
-        return cellStyle;
-    }
 
     public static Map<String, CellStyle> createStyles(Workbook wb){
         Map<String, CellStyle> styles = new HashMap<>();
+        EFont eFont = new EFont();
         CellStyle style;
+
         Font titleFont = wb.createFont();
         titleFont.setFontHeightInPoints((short)18);
         titleFont.setBold(true);
         style = wb.createCellStyle();
+
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
         style.setFont(titleFont);
@@ -215,6 +115,23 @@ public class ECellStyle {
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
         styles.put("formula_2", style);
+
+
+        style = wb.createCellStyle();
+        style.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        styles.put("background", style);
+
+        /** Dash Dot cell Border style **/
+        style = wb.createCellStyle();
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        style.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        style.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
+        style.setFillForegroundColor(IndexedColors.BLUE_GREY.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        styles.put("dash_dot",style);
 
         return styles;
     }
