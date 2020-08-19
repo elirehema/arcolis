@@ -11,14 +11,16 @@ public class ESheet {
     private final EType title;
     private final EType cell;
     private final EType header;
+    private final EType background;
 
 
-    public ESheet(List<?> objects, String excelFilePath,EType header, EType title, EType cell) {
+    public ESheet(List<?> objects, String excelFilePath,EType header, EType title, EType cell, EType background) {
         this.objects = objects;
         this.excelFilePath = excelFilePath;
         this.title = title;
         this.cell = cell;
         this.header = header;
+        this.background = background;
     }
 
     public EType getHeader() {
@@ -41,20 +43,26 @@ public class ESheet {
         return cell;
     }
 
+    public EType getBackground() {
+        return background;
+    }
+
     public static class Builder {
         private List<?> objects;
         private final String excelFilePath;
         private  EType title;
         private EType cell;
         private EType header;
+        private EType background;
         private EPrinter EPrinter = new EPrinter().getInstance();
 
-        public Builder(List<?> objects, String excelFilePath, EType header, EType title, EType cell) {
+        public Builder(List<?> objects, String excelFilePath, EType header, EType title, EType cell, EType background) {
             this.objects = objects;
             this.excelFilePath = excelFilePath;
             this.title = title;
             this.cell = cell;
             this.header = header;
+            this.background = background;
         }
         public Builder(String excelFilePath){
             this.excelFilePath = excelFilePath;
@@ -80,14 +88,18 @@ public class ESheet {
             this.header = header;
             return this;
         }
+        public Builder background(EType background){
+            this.background = background;
+            return this;
+        }
 
         public ESheet build() {
-            return new ESheet(objects, excelFilePath,header, title,cell);
+            return new ESheet(objects, excelFilePath,header, title,cell, background);
         }
         public ESheet write() throws IOException {
             EPrinter.ExcelSheet(this.objects, excelFilePath, header, title, cell);
 
-            return new ESheet(objects,excelFilePath,header, title,cell);
+            return new ESheet(objects,excelFilePath,header, title,cell,background);
         }
 
     }

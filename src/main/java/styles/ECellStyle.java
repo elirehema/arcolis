@@ -119,6 +119,11 @@ public class ECellStyle {
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        style.setBorderLeft(BorderStyle.DASH_DOT_DOT);
+        style.setBorderRight(BorderStyle.DOTTED);
+        style.setLeftBorderColor(IndexedColors.WHITE.getIndex());
+        style.setBottomBorderColor(IndexedColors.WHITE.getIndex());
         style.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setFont(monthFont);
@@ -171,7 +176,20 @@ public class ECellStyle {
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         styles.put(EType.DASHED_LIGHT_GREY,style);
 
+        style = wb.createCellStyle();
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        style.setBorderBottom(BorderStyle.DASH_DOT_DOT);
+        style.setBorderLeft(BorderStyle.DASH_DOT_DOT);
+        style.setBorderLeft(BorderStyle.DASH_DOT_DOT);
+        style.setLeftBorderColor(IndexedColors.WHITE.getIndex());
+        style.setBottomBorderColor(IndexedColors.WHITE.getIndex());
+
+        style.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        styles.put(EType.DEFAULT_BACKGROUND_COLOR, style);
+
         return styles;
     }
-
 }
