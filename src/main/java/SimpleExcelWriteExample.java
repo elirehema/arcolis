@@ -35,7 +35,6 @@ public class SimpleExcelWriteExample {
         String excelFilePath = "NiceJavaBooks";
         String multipleFilePath = "BookList.xls";
         eSheet = new ESheet.Builder(multipleFilePath)
-                .title(EType.HEADER)
                 .setData(getListBook("Book Name 1"))
                 .write();
         //excelWriterExample.ExcelSheet(getListBook("Book Name 1"), multipleFilePath);

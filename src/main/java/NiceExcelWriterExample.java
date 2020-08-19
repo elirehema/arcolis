@@ -108,7 +108,7 @@ public class NiceExcelWriterExample {
         titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue(sheet.getSheetName());
-        titleCell.setCellStyle(styles.get(EType.TITLE));
+        titleCell.setCellStyle(styles.get(EType.DEFAULT_TITLE));
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, o.getClass().getDeclaredFields().length));
 
         Row headerRow = sheet.createRow(1);
@@ -187,7 +187,7 @@ public class NiceExcelWriterExample {
     private void populateSingleSheetWithData(Sheet sheet, List<?> objects) {
         int rowCount = 0;
         for (Object o : objects) {
-            createHeaderRow(o, sheet, EType.HEADER);
+            createHeaderRow(o, sheet, EType.DEFAULT_HEADER);
             Row row = sheet.createRow(++rowCount);
             try {
                 writeExcelSheetBook(o, rowCount, row);

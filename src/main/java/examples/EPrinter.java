@@ -92,20 +92,20 @@ public class EPrinter {
         titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue(sheet.getSheetName());
-        titleCell.setCellStyle(styles.get(TitleCellStyles));
+        titleCell.setCellStyle(styles.getOrDefault(TitleCellStyles, styles.get(EType.DEFAULT_TITLE)));
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, o.getClass().getDeclaredFields().length));
 
         Row headerRow = sheet.createRow(1);
         headerRow.setHeightInPoints(35);
         indexcells = headerRow.createCell(0);
-        indexcells.setCellStyle(styles.get(HeaderCellStyle));
+        indexcells.setCellStyle(styles.getOrDefault(HeaderCellStyle, styles.get(EType.DEFAULT_HEADER)));
         indexcells.setCellValue("#");
         int index = 0;
         Field[] fields = o.getClass().getDeclaredFields();
         for (int i = 0; i < getFieldNames(fields).size(); i++) {
             dataCell = headerRow.createCell(++index);
             sheet.setColumnWidth(i, (fields[i].getName().length() + 12) * 256);
-            dataCell.setCellStyle(styles.get(HeaderCellStyle));
+            dataCell.setCellStyle(styles.getOrDefault(HeaderCellStyle, styles.get(EType.DEFAULT_HEADER)));
             dataCell.setCellValue(fields[i].getName().toUpperCase());
         }
         index = 0;
@@ -121,9 +121,8 @@ public class EPrinter {
     private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row, EType DataCellStyle) {
         Cell cell = row.createCell(0);
         eCellStyle = new ECellStyle(cell);
-        cell.setCellStyle(eCellStyle.getCellStyle());
         cell.setCellValue(rowNumber.toString());
-        cell.setCellStyle(styles.get(DataCellStyle));
+        cell.setCellStyle(styles.getOrDefault(DataCellStyle, styles.get(EType.DEFAULT_CELL)));
         Field[] fields = obj.getClass().getDeclaredFields();
         int rowCount = 0;
         for (Field f : fields) {
@@ -133,7 +132,7 @@ public class EPrinter {
                 Field field = obj.getClass().getDeclaredField(f.getName().toString());
                 field.setAccessible(true);
                 Object value = field.get(obj);
-                cell.setCellStyle(styles.get(DataCellStyle));
+                cell.setCellStyle(styles.getOrDefault(DataCellStyle, styles.get(EType.DEFAULT_CELL)));
                 cell.setCellValue(value.toString());
             } catch (Exception e) {
                 e.printStackTrace();
