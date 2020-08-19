@@ -24,6 +24,8 @@ import java.util.*;
  * -- under the License.
  * --
  **/
+import examples.Aerosol;
+import examples.ESheet;
 import models.Book;
 import models.Language;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -38,12 +40,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class SimpleExcelWriteExample {
     public static void main(String [] args) throws IOException {
         NiceExcelWriterExample excelWriterExample = new NiceExcelWriterExample().getInstance();
+        ESheet eSheet;
 
         List<Map<String, List<?>> > languageList = getListOfObject();
         String excelFilePath = "NiceJavaBooks";
         String multipleFilePath = "BookList.xls";
-        excelWriterExample.ExcelSheet(getListBook("Book Name 1"), multipleFilePath);
-        excelWriterExample.ExcelSheets(languageList, excelFilePath);
+        eSheet = new ESheet.Builder(getListBook("Book Name 1"),multipleFilePath).write();
+        //excelWriterExample.ExcelSheet(getListBook("Book Name 1"), multipleFilePath);
+        //excelWriterExample.ExcelSheets(languageList, excelFilePath);
         System.exit(0);
     }
 
