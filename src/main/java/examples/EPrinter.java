@@ -91,7 +91,7 @@ public class EPrinter {
         Row titleRow = sheet.createRow(0);
         titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue(sheet.getSheetName());
+        titleCell.setCellValue(sheet.getSheetName().substring(0, 1).toUpperCase() + sheet.getSheetName().substring(1));
         titleCell.setCellStyle(styles.getOrDefault(TitleCellStyles, styles.get(EType.DEFAULT_TITLE)));
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, o.getClass().getDeclaredFields().length));
 
