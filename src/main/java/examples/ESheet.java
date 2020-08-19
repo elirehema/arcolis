@@ -3,7 +3,6 @@ package examples;
 import styles.EType;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 public class ESheet {
@@ -41,7 +40,7 @@ public class ESheet {
         private final String excelFilePath;
         private  EType headerCellColor;
         private EType dataCellColor;
-        private  Aerosol aerosol= new Aerosol().getInstance();
+        private EPrinter EPrinter = new EPrinter().getInstance();
 
         public Builder(List<?> objects, String excelFilePath, EType headerCellColor, EType dataCellColor) {
             this.objects = objects;
@@ -68,7 +67,7 @@ public class ESheet {
             return new ESheet(objects, excelFilePath,headerCellColor,dataCellColor);
         }
         public ESheet write() throws IOException {
-            aerosol.ExcelSheet(
+            EPrinter.ExcelSheet(
                     this.objects, excelFilePath,headerCellColor, dataCellColor
             );
 
