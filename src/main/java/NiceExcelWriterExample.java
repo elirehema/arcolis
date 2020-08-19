@@ -3,6 +3,7 @@ import styles.ECellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import styles.EType;
 import workbook.EWorkBook;
 
 import java.io.FileOutputStream;
@@ -37,27 +38,25 @@ public class NiceExcelWriterExample {
     private ECellStyle eCellStyle = null;
     private EWorkBook eWorkBook = new EWorkBook();
     private Workbook workbook;
-    Map<String, CellStyle> styles = null;
+    private final Sheet sheet = null;
+    Map<EType, CellStyle> styles = null;
 
+    public NiceExcelWriterExample() {
+    }
 
-    /**
-     * Write an Excel File with single Sheet
-     **/
+    public static class LazyHolder {
+        public static final NiceExcelWriterExample INSTANCE = new NiceExcelWriterExample();
+    }
+
+    public NiceExcelWriterExample getInstance() {
+        return LazyHolder.INSTANCE;
+    }
 
     public void ExcelSheet(List<?> objectList, String excelFilePath) throws IOException {
         workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
         styles = eCellStyle.createStyles(workbook);
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
-        int rowCount = 0;
-        for (Object object : objectList) {
-            createHeaderRow(object, sheet);
-            Row row = sheet.createRow(++rowCount);
-            try {
-                writeExcelSheetBook(object, rowCount, row);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        populateSingleSheetWithData(sheet, objectList);
         try (FileOutputStream outputStream = new FileOutputStream(appendFileExtensionFormatIfNotProvided(excelFilePath))) {
             workbook.write(outputStream);
             outputStream.close();
@@ -76,17 +75,7 @@ public class NiceExcelWriterExample {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 Sheet sheet = workbook.createSheet(entry.getKey().toString());
                 List<Object> objects = (List<Object>) entry.getValue();
-                int rowCount = 0;
-                for (Object o : objects) {
-                    createHeaderRow(o, sheet);
-                    Row row = sheet.createRow(++rowCount);
-                    try {
-                        writeExcelSheetBook(o, rowCount, row);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                rowCount = 0;
+                populateSingleSheetWithData(sheet, objects);
             }
 
         }
@@ -97,7 +86,7 @@ public class NiceExcelWriterExample {
 
     }
 
-    private void createHeaderRow(Object o, Sheet sheet) {
+    private void createHeaderRow(Object o, Sheet sheet, EType headerStyles) {
         Cell dataCell, indexcells = null;
         PrintSetup printSetup = sheet.getPrintSetup();
         printSetup.setFitHeight((short) 1);
@@ -114,27 +103,27 @@ public class NiceExcelWriterExample {
         sheet.setHorizontallyCenter(true);
         sheet.removeMergedRegion(0);
 
-       Row titleRow = sheet.createRow(0);
-       titleRow.setHeightInPoints(45);
+        Row titleRow = sheet.createRow(0);
+        titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue(sheet.getSheetName());
-        titleCell.setCellStyle(styles.get("title"));
-        sheet.addMergedRegion(new CellRangeAddress(0,0,0, o.getClass().getDeclaredFields().length));
+        titleCell.setCellStyle(styles.get(EType.TITLE));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, o.getClass().getDeclaredFields().length));
 
         Row headerRow = sheet.createRow(1);
         headerRow.setHeightInPoints(35);
         indexcells = headerRow.createCell(0);
-        indexcells.setCellStyle(styles.get("header"));
+        indexcells.setCellStyle(styles.get(headerStyles));
         indexcells.setCellValue("#");
         int index = 0;
         Field[] fields = o.getClass().getDeclaredFields();
         for (int i = 0; i < getFieldNames(fields).size(); i++) {
             dataCell = headerRow.createCell(++index);
-            sheet.setColumnWidth(i,(fields[i].getName().length()+12) * 256);
-            dataCell.setCellStyle(styles.get("header"));
+            sheet.setColumnWidth(i, (fields[i].getName().length() + 12) * 256);
+            dataCell.setCellStyle(styles.get(headerStyles));
             dataCell.setCellValue(fields[i].getName().toUpperCase());
         }
-        index =0;
+        index = 0;
 
     }
 
@@ -178,18 +167,34 @@ public class NiceExcelWriterExample {
     }
 
 
-    /**Get default excel format**/
-    private  String appendFileExtensionFormatIfNotProvided(String extension){
+    /**
+     * Get default excel format
+     **/
+    private String appendFileExtensionFormatIfNotProvided(String extension) {
         String filename = null;
-        if (extension.endsWith(".xls")){
+        if (extension.endsWith(".xls")) {
             filename = extension;
-        }else if (extension.endsWith(".xlsx")){
+        } else if (extension.endsWith(".xlsx")) {
             filename = extension;
-        }else {
+        } else {
             filename = extension.concat(".xls");
         }
 
         return filename;
+    }
+
+    private void populateSingleSheetWithData(Sheet sheet, List<?> objects) {
+        int rowCount = 0;
+        for (Object o : objects) {
+            createHeaderRow(o, sheet, EType.HEADER);
+            Row row = sheet.createRow(++rowCount);
+            try {
+                writeExcelSheetBook(o, rowCount, row);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        rowCount = 0;
     }
 
 
