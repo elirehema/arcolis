@@ -24,6 +24,7 @@ import java.util.*;
  **/
 import examples.ESheet;
 import models.Book;
+import styles.EType;
 
 public class SimpleExcelWriteExample {
     public static void main(String [] args) throws IOException {
@@ -33,7 +34,10 @@ public class SimpleExcelWriteExample {
         List<Map<String, List<?>> > languageList = getListOfObject();
         String excelFilePath = "NiceJavaBooks";
         String multipleFilePath = "BookList.xls";
-        eSheet = new ESheet.Builder(getListBook("Book Name 1"),multipleFilePath).write();
+        eSheet = new ESheet.Builder(multipleFilePath)
+                .title(EType.HEADER)
+                .setData(getListBook("Book Name 1"))
+                .write();
         //excelWriterExample.ExcelSheet(getListBook("Book Name 1"), multipleFilePath);
         //excelWriterExample.ExcelSheets(languageList, excelFilePath);
         System.exit(0);

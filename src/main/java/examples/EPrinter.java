@@ -33,12 +33,12 @@ public class EPrinter {
     }
 
     public void ExcelSheet(
-            List<?> objectList, String excelFilePath,
-            EType headerCellStyle, EType dataCellStyle) throws IOException {
+            List<?> objectList, String excelFilePath, EType HeaderCellStyle,
+            EType TitleCellStyles, EType DataCellStyle) throws IOException {
         workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
         styles = eCellStyle.createStyles(workbook);
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
-        populateSingleSheetWithData(sheet, objectList, headerCellStyle, dataCellStyle);
+        populateSingleSheetWithData(sheet, objectList, HeaderCellStyle, TitleCellStyles, DataCellStyle);
         try (FileOutputStream outputStream = new FileOutputStream(appendFileExtensionFormatIfNotProvided(excelFilePath))) {
             workbook.write(outputStream);
             outputStream.close();
@@ -48,9 +48,8 @@ public class EPrinter {
 
     @SuppressWarnings("unchecked")
     public void ExcelSheets(
-            List<Map<String, List<?>>> objs, String excelFilePath,
-            EType headerCellStyle, EType dataCellStyle
-    ) throws IOException {
+            List<Map<String, List<?>>> objs, String excelFilePath, EType HeaderCellStyle,
+            EType TitleCellStyles, EType DataCellStyle) throws IOException {
         workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
         styles = eCellStyle.createStyles(workbook);
 
@@ -60,7 +59,7 @@ public class EPrinter {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 Sheet sheet = workbook.createSheet(entry.getKey().toString());
                 List<Object> objects = (List<Object>) entry.getValue();
-                populateSingleSheetWithData(sheet, objects, headerCellStyle, dataCellStyle);
+                populateSingleSheetWithData(sheet, objects, HeaderCellStyle, TitleCellStyles, DataCellStyle);
             }
 
         }
@@ -71,7 +70,8 @@ public class EPrinter {
 
     }
 
-    private void createHeaderRow(Object o, Sheet sheet, EType headerStyles) {
+    private void createHeaderRow(Object o, Sheet sheet, EType HeaderCellStyle,
+                                 EType TitleCellStyles) {
         Cell dataCell, indexcells = null;
         PrintSetup printSetup = sheet.getPrintSetup();
         printSetup.setFitHeight((short) 1);
@@ -92,20 +92,20 @@ public class EPrinter {
         titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue(sheet.getSheetName());
-        titleCell.setCellStyle(styles.get(headerStyles));
+        titleCell.setCellStyle(styles.get(TitleCellStyles));
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, o.getClass().getDeclaredFields().length));
 
         Row headerRow = sheet.createRow(1);
         headerRow.setHeightInPoints(35);
         indexcells = headerRow.createCell(0);
-        indexcells.setCellStyle(styles.get(headerStyles));
+        indexcells.setCellStyle(styles.get(HeaderCellStyle));
         indexcells.setCellValue("#");
         int index = 0;
         Field[] fields = o.getClass().getDeclaredFields();
         for (int i = 0; i < getFieldNames(fields).size(); i++) {
             dataCell = headerRow.createCell(++index);
             sheet.setColumnWidth(i, (fields[i].getName().length() + 12) * 256);
-            dataCell.setCellStyle(styles.get(headerStyles));
+            dataCell.setCellStyle(styles.get(HeaderCellStyle));
             dataCell.setCellValue(fields[i].getName().toUpperCase());
         }
         index = 0;
@@ -118,12 +118,12 @@ public class EPrinter {
      * Give {@param rowNumber} to initial column
      **/
 
-    private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row, EType dataCellStyle) {
+    private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row, EType DataCellStyle) {
         Cell cell = row.createCell(0);
         eCellStyle = new ECellStyle(cell);
         cell.setCellStyle(eCellStyle.getCellStyle());
         cell.setCellValue(rowNumber.toString());
-        cell.setCellStyle(styles.get(dataCellStyle));
+        cell.setCellStyle(styles.get(DataCellStyle));
         Field[] fields = obj.getClass().getDeclaredFields();
         int rowCount = 0;
         for (Field f : fields) {
@@ -133,7 +133,7 @@ public class EPrinter {
                 Field field = obj.getClass().getDeclaredField(f.getName().toString());
                 field.setAccessible(true);
                 Object value = field.get(obj);
-                cell.setCellStyle(styles.get(dataCellStyle));
+                cell.setCellStyle(styles.get(DataCellStyle));
                 cell.setCellValue(value.toString());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -168,13 +168,13 @@ public class EPrinter {
         return filename;
     }
 
-    private void populateSingleSheetWithData(Sheet sheet, List<?> objects, EType headerCellStyle, EType dataCellStyles) {
+    private void populateSingleSheetWithData(Sheet sheet, List<?> objects, EType HeaderCellStyle, EType TitleCellStyles, EType DataCellStyles) {
         int rowCount = 0;
         for (Object o : objects) {
-            createHeaderRow(o, sheet, headerCellStyle);
+            createHeaderRow(o, sheet, HeaderCellStyle, TitleCellStyles);
             Row row = sheet.createRow(++rowCount);
             try {
-                writeExcelSheetBook(o, rowCount, row, dataCellStyles);
+                writeExcelSheetBook(o, rowCount, row, DataCellStyles);
             } catch (Exception e) {
                 e.printStackTrace();
             }
