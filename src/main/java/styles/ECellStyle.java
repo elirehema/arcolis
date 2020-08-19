@@ -30,7 +30,6 @@ public class ECellStyle {
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cellStyle.setLeftBorderColor(IndexedColors.WHITE.getIndex());
         cellStyle.setBottomBorderColor(IndexedColors.WHITE.getIndex());
-        this.cell.setCellStyle(cellStyle);
         return cellStyle;
     }
 
@@ -60,8 +59,8 @@ public class ECellStyle {
     }
 
 
-    public static Map<String, CellStyle> createStyles(Workbook wb){
-        Map<String, CellStyle> styles = new HashMap<>();
+    public static Map<EType, CellStyle> createStyles(Workbook wb){
+        Map<EType, CellStyle> styles = new HashMap<>();
         EFont eFont = new EFont();
         CellStyle style;
 
@@ -73,7 +72,7 @@ public class ECellStyle {
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
         style.setFont(titleFont);
-        styles.put("title", style);
+        styles.put(EType.TITLE, style);
 
         Font monthFont = wb.createFont();
         monthFont.setFontHeightInPoints((short)11);
@@ -85,7 +84,7 @@ public class ECellStyle {
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setFont(monthFont);
         style.setWrapText(true);
-        styles.put("header", style);
+        styles.put(EType.HEADER, style);
 
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
@@ -98,7 +97,7 @@ public class ECellStyle {
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         style.setBorderBottom(BorderStyle.THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        styles.put("cell", style);
+        styles.put(EType.CELL, style);
 
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
@@ -106,7 +105,7 @@ public class ECellStyle {
         style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
-        styles.put("formula", style);
+        styles.put(EType.FORMULA_1, style);
 
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
@@ -114,13 +113,13 @@ public class ECellStyle {
         style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
-        styles.put("formula_2", style);
+        styles.put(EType.FORMULA_2, style);
 
 
         style = wb.createCellStyle();
         style.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        styles.put("background", style);
+        styles.put(EType.SOLID_LIGHT_TORQUES, style);
 
         /** Dash Dot cell Border style **/
         style = wb.createCellStyle();
@@ -131,7 +130,7 @@ public class ECellStyle {
         style.setBottomBorderColor(IndexedColors.LIGHT_GREEN.getIndex());
         style.setFillForegroundColor(IndexedColors.BLUE_GREY.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        styles.put("dash_dot",style);
+        styles.put(EType.DASHED_LIGHT_GREY,style);
 
         return styles;
     }
