@@ -1,63 +1,44 @@
+package examples;
 
-import styles.ECellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import styles.ECellStyle;
 import styles.EType;
 import workbook.EWorkBook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * -- This file created by eli on 15/07/2020 for poixss
- * --
- * -- Licensed to the Apache Software Foundation (ASF) under one
- * -- or more contributor license agreements. See the NOTICE file
- * -- distributed with this work for additional information
- * -- regarding copyright ownership. The ASF licenses this file
- * -- to you under the Apache License, Version 2.0 (the
- * -- "License"); you may not use this file except in compliance
- * -- with the License. You may obtain a copy of the License at
- * --
- * -- http://www.apache.org/licenses/LICENSE-2.0
- * --
- * -- Unless required by applicable law or agreed to in writing,
- * -- software distributed under the License is distributed on an
- * -- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * -- KIND, either express or implied. See the License for the
- * -- specific language governing permissions and limitations
- * -- under the License.
- * --
- **/
-public class NiceExcelWriterExample {
-    private Logger logger = Logger.getLogger(NiceExcelWriterExample.class.getName());
+public class Aerosol {
+    private Logger logger = Logger.getLogger(Aerosol.class.getName());
     private ECellStyle eCellStyle = null;
     private EWorkBook eWorkBook = new EWorkBook();
     private Workbook workbook;
     private final Sheet sheet = null;
     Map<EType, CellStyle> styles = null;
 
-    public NiceExcelWriterExample() {
-    }
-
     public static class LazyHolder {
-        public static final NiceExcelWriterExample INSTANCE = new NiceExcelWriterExample();
+        public static final Aerosol INSTANCE = new Aerosol();
     }
 
-    public NiceExcelWriterExample getInstance() {
-        return LazyHolder.INSTANCE;
+    public Aerosol getInstance() {
+        return Aerosol.LazyHolder.INSTANCE;
     }
 
-    public void ExcelSheet(List<?> objectList, String excelFilePath) throws IOException {
+    public void ExcelSheet(
+            List<?> objectList, String excelFilePath,
+            EType headerCellStyle, EType dataCellStyle) throws IOException {
         workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
         styles = eCellStyle.createStyles(workbook);
-
         Sheet sheet = workbook.createSheet(excelFilePath.toLowerCase());
-        populateSingleSheetWithData(sheet, objectList);
+        populateSingleSheetWithData(sheet, objectList, headerCellStyle, dataCellStyle);
         try (FileOutputStream outputStream = new FileOutputStream(appendFileExtensionFormatIfNotProvided(excelFilePath))) {
             workbook.write(outputStream);
             outputStream.close();
@@ -66,7 +47,10 @@ public class NiceExcelWriterExample {
     }
 
     @SuppressWarnings("unchecked")
-    public void ExcelSheets(List<Map<String, List<?>>> objs, String excelFilePath) throws IOException {
+    public void ExcelSheets(
+            List<Map<String, List<?>>> objs, String excelFilePath,
+            EType headerCellStyle, EType dataCellStyle
+    ) throws IOException {
         workbook = eWorkBook.getDefaultExcelWorkbook(excelFilePath);
         styles = eCellStyle.createStyles(workbook);
 
@@ -76,7 +60,7 @@ public class NiceExcelWriterExample {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 Sheet sheet = workbook.createSheet(entry.getKey().toString());
                 List<Object> objects = (List<Object>) entry.getValue();
-                populateSingleSheetWithData(sheet, objects);
+                populateSingleSheetWithData(sheet, objects, headerCellStyle, dataCellStyle);
             }
 
         }
@@ -108,7 +92,7 @@ public class NiceExcelWriterExample {
         titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue(sheet.getSheetName());
-        titleCell.setCellStyle(styles.get(EType.TITLE));
+        titleCell.setCellStyle(styles.get(headerStyles));
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, o.getClass().getDeclaredFields().length));
 
         Row headerRow = sheet.createRow(1);
@@ -134,12 +118,12 @@ public class NiceExcelWriterExample {
      * Give {@param rowNumber} to initial column
      **/
 
-    private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row) {
+    private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row, EType dataCellStyle) {
         Cell cell = row.createCell(0);
         eCellStyle = new ECellStyle(cell);
         cell.setCellStyle(eCellStyle.getCellStyle());
         cell.setCellValue(rowNumber.toString());
-        cell.setCellStyle(styles.get("cell"));
+        cell.setCellStyle(styles.get(dataCellStyle));
         Field[] fields = obj.getClass().getDeclaredFields();
         int rowCount = 0;
         for (Field f : fields) {
@@ -149,7 +133,7 @@ public class NiceExcelWriterExample {
                 Field field = obj.getClass().getDeclaredField(f.getName().toString());
                 field.setAccessible(true);
                 Object value = field.get(obj);
-                cell.setCellStyle(styles.get("cell"));
+                cell.setCellStyle(styles.get(dataCellStyle));
                 cell.setCellValue(value.toString());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -184,19 +168,17 @@ public class NiceExcelWriterExample {
         return filename;
     }
 
-    private void populateSingleSheetWithData(Sheet sheet, List<?> objects) {
+    private void populateSingleSheetWithData(Sheet sheet, List<?> objects, EType headerCellStyle, EType dataCellStyles) {
         int rowCount = 0;
         for (Object o : objects) {
-            createHeaderRow(o, sheet, EType.HEADER);
+            createHeaderRow(o, sheet, headerCellStyle);
             Row row = sheet.createRow(++rowCount);
             try {
-                writeExcelSheetBook(o, rowCount, row);
+                writeExcelSheetBook(o, rowCount, row, dataCellStyles);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         rowCount = 0;
     }
-
-
 }
