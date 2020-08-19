@@ -37,12 +37,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class SimpleExcelWriteExample {
     public static void main(String [] args) throws IOException {
-        NiceExcelWriterExample excelWriterExample = new NiceExcelWriterExample();
+        NiceExcelWriterExample excelWriterExample = new NiceExcelWriterExample().getInstance();
 
         List<Map<String, List<?>> > languageList = getListOfObject();
         String excelFilePath = "NiceJavaBooks";
         String multipleFilePath = "BookList.xls";
-        //excelWriterExample.writeExcel(getListBook("Book Name 1"), multipleFilePath);
+        excelWriterExample.ExcelSheet(getListBook("Book Name 1"), multipleFilePath);
         excelWriterExample.ExcelSheets(languageList, excelFilePath);
         System.exit(0);
     }
