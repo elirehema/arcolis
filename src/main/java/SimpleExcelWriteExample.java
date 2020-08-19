@@ -1,5 +1,3 @@
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -24,18 +22,8 @@ import java.util.*;
  * -- under the License.
  * --
  **/
-import examples.Aerosol;
 import examples.ESheet;
 import models.Book;
-import models.Language;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class SimpleExcelWriteExample {
     public static void main(String [] args) throws IOException {

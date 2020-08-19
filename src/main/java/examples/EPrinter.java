@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class Aerosol {
-    private Logger logger = Logger.getLogger(Aerosol.class.getName());
+public class EPrinter {
+    private Logger logger = Logger.getLogger(EPrinter.class.getName());
     private ECellStyle eCellStyle = null;
     private EWorkBook eWorkBook = new EWorkBook();
     private Workbook workbook;
@@ -25,11 +25,11 @@ public class Aerosol {
     Map<EType, CellStyle> styles = null;
 
     public static class LazyHolder {
-        public static final Aerosol INSTANCE = new Aerosol();
+        public static final EPrinter INSTANCE = new EPrinter();
     }
 
-    public Aerosol getInstance() {
-        return Aerosol.LazyHolder.INSTANCE;
+    public EPrinter getInstance() {
+        return EPrinter.LazyHolder.INSTANCE;
     }
 
     public void ExcelSheet(
