@@ -38,8 +38,8 @@ public class SimpleExcelWriteExample {
                 .header(EType.GREY_HEADER)
                 .cell(EType.DEFAULT_CELL)
                 .background(EType.DEFAULT_BACKGROUND_COLOR)
-                .setData(getListBook("Book Name 1"))
-                .write();
+                .setMap(languageList)
+                .writes();
         //excelWriterExample.ExcelSheet(getListBook("Book Name 1"), multipleFilePath);
         //excelWriterExample.ExcelSheets(languageList, excelFilePath);
         System.exit(0);
