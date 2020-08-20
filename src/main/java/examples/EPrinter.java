@@ -120,7 +120,6 @@ public class EPrinter {
 
     private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row, EType DataCellStyle) {
         Cell cell = row.createCell(0);
-        eCellStyle = new ECellStyle(cell);
         cell.setCellValue(rowNumber.toString());
         cell.setCellStyle(styles.getOrDefault(DataCellStyle, styles.get(EType.DEFAULT_CELL)));
         Field[] fields = obj.getClass().getDeclaredFields();

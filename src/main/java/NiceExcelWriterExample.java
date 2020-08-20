@@ -136,7 +136,6 @@ public class NiceExcelWriterExample {
 
     private void writeExcelSheetBook(Object obj, Integer rowNumber, Row row) {
         Cell cell = row.createCell(0);
-        eCellStyle = new ECellStyle(cell);
         cell.setCellValue(rowNumber.toString());
         cell.setCellStyle(styles.get("cell"));
         Field[] fields = obj.getClass().getDeclaredFields();

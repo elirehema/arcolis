@@ -35,11 +35,12 @@ public class SimpleExcelWriteExample {
         String excelFilePath = "NiceJavaBooks";
         String multipleFilePath = "BookList";
         eSheet = new ESheet.Builder(multipleFilePath)
-                .header(EType.GREY_HEADER)
-                .cell(EType.DEFAULT_CELL)
-                .background(EType.DEFAULT_BACKGROUND_COLOR)
+                .header(EType.TEAL_HEADER)
+                .cell(EType.FORMULA_3)
+                .title(EType.TEAL_TITLE)
                 .setMap(languageList)
                 .writes();
+
         //excelWriterExample.ExcelSheet(getListBook("Book Name 1"), multipleFilePath);
         //excelWriterExample.ExcelSheets(languageList, excelFilePath);
         System.exit(0);
