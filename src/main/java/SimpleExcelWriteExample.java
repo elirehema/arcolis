@@ -36,7 +36,7 @@ public class SimpleExcelWriteExample {
         String multipleFilePath = "BookList";
         eSheet = new ESheet.Builder(multipleFilePath)
                 .header(EType.TEAL_HEADER)
-                .cell(EType.FORMULA_3)
+                .cell(EType.LINE_2)
                 .title(EType.TEAL_TITLE)
                 .setMap(languageList)
                 .writes();

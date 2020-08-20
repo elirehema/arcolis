@@ -151,6 +151,28 @@ public class ECellStyle {
         styles.put(EType.TEAL_CELL, style);
 
 
+        style = wb.createCellStyle();
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
+        style.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
+        styles.put(EType.LINE_1, style);
+
+        style = wb.createCellStyle();
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        style.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
+        styles.put(EType.LINE_2, style);
+
+
+
 
         return styles;
     }
