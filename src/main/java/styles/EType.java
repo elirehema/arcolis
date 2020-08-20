@@ -5,7 +5,9 @@ public enum EType {
 
     TEAL_HEADER, TEAL_TITLE, TEAL_CELL,
 
-    FORMULA_1, FORMULA_2, FORMULA_3
+    FORMULA_1, FORMULA_2, FORMULA_3,
+
+    LINE_1, LINE_2
 
     ;
 }
