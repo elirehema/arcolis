@@ -38,8 +38,8 @@ public class SimpleExcelWriteExample {
                 .header(EType.TEAL_HEADER)
                 .cell(EType.LINE_2)
                 .title(EType.TEAL_TITLE)
-                .setMap(languageList)
-                .writes();
+                .setData(getListBook("New Sample Book"))
+                .write();
 
         //excelWriterExample.ExcelSheet(getListBook("Book Name 1"), multipleFilePath);
         //excelWriterExample.ExcelSheets(languageList, excelFilePath);
